@@ -77,3 +77,7 @@ Reflected/ProjectSettings/ShaderGraphSettings.asset
 
 # Ignore anything inside Screenshots folder
 */Screenshots/*
+
+# Ignore cubemaps
+*.exr
+*.exr.meta
