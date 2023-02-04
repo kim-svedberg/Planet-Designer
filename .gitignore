@@ -75,9 +75,6 @@ crashlytics-build.properties
 .DS_Store
 Reflected/ProjectSettings/ShaderGraphSettings.asset
 
-# Ignore anything inside Screenshots folder
+# Ignore anything inside folders
 */Screenshots/*
-
-# Ignore cubemaps
-*.exr
-*.exr.meta
+*/exr/*
