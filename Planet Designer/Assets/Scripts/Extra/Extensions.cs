@@ -64,6 +64,9 @@ public static class Extensions
     /// <param name="p">Position of function separator (0 to 1)</param>
     public static float CustomSmoothstep(this float x, float a = 0.5f, float p = 0.5f)
     {
+        if (a == 0f)
+            return Mathf.Clamp01(x);
+
         x = Mathf.Clamp01(x);
         a = Mathf.Clamp(a, -0.98f, 0.98f);
         p = Mathf.Clamp01(p);
