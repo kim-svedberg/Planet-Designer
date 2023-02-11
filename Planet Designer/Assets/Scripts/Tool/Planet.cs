@@ -11,10 +11,9 @@ public class Planet : MonoBehaviour
 {
     [SerializeField, HideInInspector] private Sphere terrainSphere;
     [SerializeField, HideInInspector] private Sphere oceanSphere;
+    [SerializeField, HideInInspector] private bool initialized;
 
     public static UnityEvent<Planet> RegenerationCompleted = new UnityEvent<Planet>();
-
-    private bool initialized;
 
     public Sphere TerrainSphere => terrainSphere;
     public Sphere OceanSphere => oceanSphere;
@@ -49,17 +48,13 @@ public class Planet : MonoBehaviour
         terrainSphere.ReconstructData();
         oceanSphere.ReconstructData();
 
-        /*foreach (Transform child in surfaceModifiersParent)
-            if (child.gameObject.activeSelf)
-                child.GetComponent<SurfaceModifier>().Run(this);*/
-
         terrainSphere.UpdateMesh();
         oceanSphere.UpdateMesh();
 
         RegenerationCompleted.Invoke(this);
 
         stopwatch.Stop();
-        Debug.Log("Regenerated (" + stopwatch.ElapsedMilliseconds + "ms)");
+        Debug.Log("Regenerated " + gameObject.name + " (" + stopwatch.ElapsedMilliseconds + "ms)");
     }
 
 }

@@ -1,19 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 [ExecuteAlways]
 public class Sphere : MonoBehaviour
 {
     [SerializeField] private SphereSettings settings;
     [SerializeField, HideInInspector] private TerrainFace[] terrainFaces;
-    [SerializeField, HideInInspector] private Material material;
-
-    private SphereInfo info;
-    private Transform meshesParent;
-    private Transform surfaceModifiersParent;
-
-    private bool initialized;
+    [SerializeField, HideInInspector] private SphereInfo info;
+    [SerializeField, HideInInspector] private bool initialized;
 
     public SphereSettings Settings => settings;
     public TerrainFace[] TerrainFaces => terrainFaces;
@@ -23,9 +20,13 @@ public class Sphere : MonoBehaviour
         if (!initialized)
             return;
 
+        Stopwatch stopwatch = Stopwatch.StartNew();
         Regenerate();
+        stopwatch.Stop();
+        Debug.Log("Regenerated " + gameObject.name + " (" + stopwatch.ElapsedMilliseconds + "ms)");
     }
 
+    [ContextMenu("Regenerate")]
     public void Regenerate()
     {
         if (!initialized)
@@ -38,36 +39,48 @@ public class Sphere : MonoBehaviour
 
     public void Initialize()
     {
-        initialized = true;
-        meshesParent = transform.Find("Meshes");
-        surfaceModifiersParent = transform.Find("Surface Modifiers");
+        if (initialized)
+            return;
 
+        initialized = true;
         terrainFaces = new TerrainFace[6];
-        material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
         info = GetComponent<SphereInfo>();
 
         Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
 
         for (int i = 0; i < terrainFaces.Length; ++i)
-            terrainFaces[i] = new TerrainFace(meshesParent, directions[i], material);
+            terrainFaces[i] = new TerrainFace(transform, directions[i]);
     }
 
     public void ReconstructData()
     {
-        foreach (TerrainFace terrainFace in terrainFaces)
-            terrainFace.ReconstructData(settings);
+        if (settings.fixEdgeNormals)
+            foreach (TerrainFace terrainFace in terrainFaces)
+                terrainFace.ReconstructData_SeamlessNormals(settings);
+        else
+            foreach (TerrainFace terrainFace in terrainFaces)
+                terrainFace.ReconstructData_NoNormalFix(settings);
 
-        foreach (Transform child in surfaceModifiersParent)
-            if (child.gameObject.activeSelf)
-                child.GetComponent<SurfaceModifier>().Run(this);
+        SurfaceModifier surfaceModifier;
+
+        foreach (Transform child in transform)
+            if (child.gameObject.activeSelf && (surfaceModifier = child.GetComponent<SurfaceModifier>()))
+                surfaceModifier.Run(this);
     }
 
     public void UpdateMesh()
     {
-        material.color = settings.color;
+        foreach (TerrainFace terrainFace in terrainFaces)
+            terrainFace.UpdateMesh(settings);  
+    }
+
+    [ContextMenu("Toggle Mesh In Hierarchy")]
+    private void ToggleMeshInHierarchy()
+    {
+        bool hide = terrainFaces[0].MeshFilter.gameObject.hideFlags == HideFlags.None;
 
         foreach (TerrainFace terrainFace in terrainFaces)
-            terrainFace.UpdateMesh();
+            terrainFace.MeshFilter.gameObject.hideFlags = hide ? HideFlags.HideInHierarchy : HideFlags.None;
     }
 
 }

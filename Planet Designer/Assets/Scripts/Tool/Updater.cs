@@ -18,7 +18,7 @@ public class Updater : MonoBehaviour
         if (transform.childCount != children.Length)
         {
             UpdateReferences();
-            transform.parent.GetComponent<Sphere>().Regenerate();
+            GetComponent<Sphere>().Regenerate();
         }
 
         else

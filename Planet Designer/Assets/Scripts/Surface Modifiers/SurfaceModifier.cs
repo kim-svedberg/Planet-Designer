@@ -9,6 +9,6 @@ public abstract class SurfaceModifier : MonoBehaviour
     private void OnValidate()
     {
         if (transform.parent)
-            transform.parent.parent.GetComponent<Sphere>().Regenerate();
+            transform.parent.GetComponent<Sphere>().Regenerate();
     }
 }

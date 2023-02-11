@@ -5,6 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class SphereSettings
 {
+    public bool fixEdgeNormals;
+
     [Range(3, 256)]
     public int resolution;
 
@@ -14,5 +16,5 @@ public class SphereSettings
     [Range(50, 500f)]
     public float radius;
 
-    public Color color;
+    public Material material;
 }
