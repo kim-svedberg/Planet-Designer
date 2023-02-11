@@ -78,3 +78,6 @@ Reflected/ProjectSettings/ShaderGraphSettings.asset
 # Ignore anything inside folders
 */Screenshots/*
 */exr/*
+
+# Don't ignore
+!*/Screenshots/GitHub/*
