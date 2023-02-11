@@ -5,6 +5,6 @@ This Unity tool generates game worlds in the form of planets. The tool is curren
 
 ## Screenshots
 
-![PlanetExample1](Othello/Screenshots/GitHub.Planet_example_1.png)
+![PlanetExample1](Othello/Screenshots/GitHub.Planet_example_1.jpg)
 
-![PlanetExample2](Othello/Screenshots/GitHub.Planet_example_2.png)
+![PlanetExample2](Othello/Screenshots/GitHub.Planet_example_2.jpg)
