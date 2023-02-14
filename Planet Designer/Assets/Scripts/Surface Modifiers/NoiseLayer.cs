@@ -20,11 +20,11 @@ public class NoiseLayer : SurfaceModifier
     {
         noise = new Noise(seed.value);
 
-        foreach (TerrainFace terrainFace in sphere.TerrainFaces)
+        foreach (SphereFace sphereFace in sphere.SphereFaces)
         {
-            for (int i = 0; i < terrainFace.Vertices.Length; ++i)
+            for (int i = 0; i < sphereFace.Vertices.Length; ++i)
             {
-                ModifyVertex(ref terrainFace.Vertices[i]);
+                ModifyVertex(ref sphereFace.Vertices[i]);
                 
                 void ModifyVertex(ref Vector3 vertex)
                 {

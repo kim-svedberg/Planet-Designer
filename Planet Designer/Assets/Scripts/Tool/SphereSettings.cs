@@ -17,4 +17,6 @@ public class SphereSettings
     public float radius;
 
     public Material material;
+
+    public Gradient gradient;
 }

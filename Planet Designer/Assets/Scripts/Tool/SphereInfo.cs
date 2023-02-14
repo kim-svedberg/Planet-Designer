@@ -16,7 +16,7 @@ public class SphereInfo : MonoBehaviour
     public void UpdateInfo(Sphere sphere)
     {
         SphereSettings settings = sphere.Settings;
-        Mesh mesh = sphere.TerrainFaces[0].MeshFilter.sharedMesh;
+        Mesh mesh = sphere.SphereFaces[0].MeshFilter.sharedMesh;
 
         // Mesh
         vertices = mesh.vertexCount * 6;

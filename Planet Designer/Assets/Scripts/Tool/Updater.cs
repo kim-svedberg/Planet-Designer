@@ -28,14 +28,14 @@ public class Updater : MonoBehaviour
                 if (children[i].GetSiblingIndex() != i)
                 {
                     UpdateReferences();
-                    transform.parent.GetComponent<Sphere>().Regenerate();
+                    GetComponent<Sphere>().Regenerate();
                     break;
                 }
 
                 else if (children[i].gameObject.activeSelf != active[i])
                 {
                     UpdateReferences();
-                    transform.parent.GetComponent<Sphere>().Regenerate();
+                    GetComponent<Sphere>().Regenerate();
                     break;
                 }
             }
