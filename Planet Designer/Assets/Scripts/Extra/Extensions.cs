@@ -379,42 +379,35 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Interprets this float as a percentage/decimal fraction and returns a value within the provided range (unclamped).
-    /// Formula: y = min + (max - min) * x.
-    /// See plotted function: https://www.desmos.com/calculator/mdcyvahxtz
+    /// Remaps this value from one range to another.
     /// </summary>
-    public static float PercentageToValue(this float x, float min, float max)
+    public static void Remap(this ref float x, float min1, float max1, float min2, float max2)
     {
-        return min + (max - min) * x;
+        x = (x - min1) / (max1 - min1) * (max2 - min2) + min2;
     }
 
     /// <summary>
-    /// Interprets this float as a value within the provided range and returns a percentage/decimal fraction (unclamped).
-    /// Formula: y = (x - min) / (max - min)
-    /// See plotted function https://www.desmos.com/calculator/mdcyvahxtz
+    /// Returns this value remapped from one range to another.
     /// </summary>
-    public static float ValueToPercentage(this float x, float min, float max)
+    public static float Remapped(this float x, float min1, float max1, float min2, float max2)
     {
-        return (x - min) / (max - min);
+        return (x - min1) / (max1 - min1) * (max2 - min2) + min2;
     }
 
     /// <summary>
-    /// Interprets this float as a percentage/decimal fraction and returns a value within the provided range (clamped).
-    /// Formula: y = min + (max - min) * x.
-    /// See plotted function: https://www.desmos.com/calculator/mdcyvahxtz
+    /// Wraps this value to the provided range.
     /// </summary>
-    public static float PercentageToValueClamped(this float x, float min, float max)
+    public static void Wrap(this ref float x, float min, float max)
     {
-        return min + (max - min) * Mathf.Clamp01(x);
+        x = x - (max - min) * Mathf.Floor(x / (max - min));
     }
 
     /// <summary>
-    /// Interprets this float as a value within the provided range and returns a percentage/decimal fraction (clamped).
-    /// Formula: y = (x - min) / (max - min)
-    /// See plotted function https://www.desmos.com/calculator/mdcyvahxtz
+    /// Returns this value wrapped to the provided range.
     /// </summary>
-    public static float ValueToPercentageClamped(this float x, float min, float max)
+    public static float Wrapped(this float x, float min, float max)
     {
-        return Mathf.Clamp01((x - min) / (max - min));
+        return x - (max - min) * Mathf.Floor(x / (max - min));
     }
+
 }

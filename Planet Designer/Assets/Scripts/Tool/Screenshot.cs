@@ -17,6 +17,10 @@ public class Screenshot : MonoBehaviour
 
     private static Screenshot instance;
 
+    [Header("Sequence settings")]
+    [SerializeField] private int images;
+    [SerializeField] private float interval;
+
     private void OnEnable()
     {
         instance = this;
@@ -41,13 +45,44 @@ public class Screenshot : MonoBehaviour
     #endif
     public static void Capture()
     {
-        string fileName =
-            instance.folderPath +
-            DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss.") +
-            instance.imageFormat.ToString().ToLower();
+        string fileName = instance.folderPath + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss-ff");
+        string extension = "." + instance.imageFormat.ToString().ToLower();
 
-        Debug.Log("Screenshot taken: " + fileName);
-        ScreenCapture.CaptureScreenshot(fileName);
+        if (System.IO.File.Exists(fileName + extension))
+        {
+            int i = 0;
+            string newName;
+
+            do
+            {
+                newName = fileName + " (" + ++i + ")";
+            }
+            while (System.IO.File.Exists(newName + extension));
+
+            fileName = newName;
+        }
+
+        Debug.Log("Screenshot taken: " + fileName + extension);
+        ScreenCapture.CaptureScreenshot(fileName + extension);
+    }
+
+#if UNITY_EDITOR
+    [MenuItem("Planet Designer/Screenshot Sequence %#2")]
+#endif
+    public static void CaptureSequence()
+    {
+        instance.StartCoroutine(instance.Coroutine_CaptureSequence());
+    }
+
+    private IEnumerator Coroutine_CaptureSequence()
+    {
+        for (int i = 0; i < images; ++i)
+        {
+            Capture();
+            yield return new WaitForSeconds(interval);
+        }
+
+        yield return 0;
     }
 
 }

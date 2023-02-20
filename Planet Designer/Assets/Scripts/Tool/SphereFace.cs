@@ -8,6 +8,7 @@ public class SphereFace : MonoBehaviour
     [SerializeField] private Mesh mesh;
     [SerializeField] private MeshFilter meshFilter;
     [SerializeField] private MeshRenderer meshRenderer;
+    [SerializeField] private MeshCollider meshCollider;
 
     [SerializeField] private int resolution;
     [SerializeField] private Vector3 localUp;
@@ -37,11 +38,15 @@ public class SphereFace : MonoBehaviour
 
         transform.parent = parent;
         gameObject.hideFlags = HideFlags.HideInHierarchy;
+        gameObject.layer = transform.parent.gameObject.layer;
 
         meshFilter = gameObject.AddComponent<MeshFilter>();
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
-
-        mesh = meshFilter.sharedMesh = new Mesh();
+        meshCollider = gameObject.AddComponent<MeshCollider>();
+        
+        mesh = new Mesh();
+        meshFilter.sharedMesh = mesh;
+        meshCollider.sharedMesh = mesh;
     }
 
     public void ReconstructData_NoNormalFix(SphereSettings sphereSettings)
@@ -208,6 +213,8 @@ public class SphereFace : MonoBehaviour
             RemoveOuterEdge();
 
         mesh.SetUVs(0, uvs);
+        meshFilter.sharedMesh = mesh;
+        meshCollider.sharedMesh = mesh;
         meshRenderer.sharedMaterial = sphereSettings.material;
     }
 

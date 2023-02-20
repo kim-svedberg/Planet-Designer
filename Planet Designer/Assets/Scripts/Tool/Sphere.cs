@@ -10,7 +10,7 @@ public class Sphere : MonoBehaviour
     public enum SphereType { Ocean, Terrain }
 
     [SerializeField] private SphereSettings settings;
-    [SerializeField] private SphereFace[] sphereFaces;
+    [SerializeField, HideInInspector] private SphereFace[] sphereFaces;
     [SerializeField, HideInInspector] private SphereInfo info;
     [SerializeField, HideInInspector] private bool initialized;
     [SerializeField, HideInInspector] private Range elevationRange;
