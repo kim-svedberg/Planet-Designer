@@ -38,12 +38,16 @@ public struct GeographicCoordinates
     }
 
     /// <summary>
-    /// Wraps the longitude and latitude to their intended ranges
+    /// Normalizes the values to their intended ranges
     /// </summary>
-    public GeographicCoordinates Wrap()
+    public GeographicCoordinates Normalize()
     {
         longitude.Wrap(-180f, 180f);
-        latitude.Wrap(-90f, 90f);
+        latitude = Mathf.Clamp(latitude, -90f, 90f);
+
+        if (magnitude < 0f)
+            magnitude = 0f;
+
         return this;
     }
 

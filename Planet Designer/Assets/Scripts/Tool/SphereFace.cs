@@ -20,7 +20,7 @@ public class SphereFace : MonoBehaviour
     [SerializeField] private Vector3[] normals;
     [SerializeField] private Vector2[] uvs;
 
-    [SerializeField] private bool initialized;
+    [SerializeField, HideInInspector] private bool initialized;
 
     public MeshFilter MeshFilter => meshFilter;
     public Vector3[] Vertices => vertices;

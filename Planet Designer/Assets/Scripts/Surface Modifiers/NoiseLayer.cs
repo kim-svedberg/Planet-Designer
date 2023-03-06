@@ -2,19 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class NoiseLayer : SurfaceModifier
 {
     private Noise noise;
-
-    [Min(0f)]
-    [SerializeField] private float amplitude = 1f;
-
-    [Min(0f)]
-    [SerializeField] private float scale = 1f;
-
-    [SerializeField] private AnimationCurve manipulation;
-
-    [SerializeField] private Seed seed;
+    [Min(0f)] public float amplitude = 1f;
+    [Min(0f)] public float scale = 1f;
+    public AnimationCurve manipulation;
+    public Seed seed;
 
     public override void Run(Sphere sphere)
     {
@@ -25,17 +20,17 @@ public class NoiseLayer : SurfaceModifier
             for (int i = 0; i < sphereFace.Vertices.Length; ++i)
             {
                 ModifyVertex(ref sphereFace.Vertices[i]);
-                
-                void ModifyVertex(ref Vector3 vertex)
-                {
-                    vertex +=
-                        vertex.normalized
-                        * Manipulate(noise.Evaluate((vertex.normalized + Vector3.one * seed.value) * scale))
-                        * amplitude
-                        * amplitude;
-                }
             }
         }
+    }
+
+    private void ModifyVertex(ref Vector3 vertex)
+    {
+        vertex +=
+            vertex.normalized
+            * Manipulate(noise.Evaluate((vertex.normalized + Vector3.one * seed.value) * scale))
+            * amplitude
+            * amplitude;
     }
 
     private float Manipulate(float value)

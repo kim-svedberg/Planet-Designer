@@ -7,7 +7,7 @@ public class PlanetCreator : MonoBehaviour
     [SerializeField] private GameObject planetPrefab;
 
     [ContextMenu("Create planet")]
-    private void CreatePlanet()
+    public void CreatePlanet()
     {
         GameObject planetObj = Instantiate(planetPrefab);
         planetObj.name = "Planet";

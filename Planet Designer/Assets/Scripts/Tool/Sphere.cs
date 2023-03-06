@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.Events;
 using Debug = UnityEngine.Debug;
 
 [ExecuteAlways]
@@ -17,34 +18,38 @@ public class Sphere : MonoBehaviour
     [SerializeField, HideInInspector] private SphereType sphereType;
     [SerializeField, HideInInspector] private Planet planet;
 
-    public SphereSettings Settings => settings;
+    public static UnityEvent<Sphere> RegenerationCompleted = new UnityEvent<Sphere>();
+
+    public SphereSettings Settings { get { return settings; } set { settings = value; } }
     public SphereFace[] SphereFaces => sphereFaces;
     public Range ElevationRange => elevationRange;
 
-    private void OnValidate()
+    public void AutoRegenerate()
     {
-        if (!initialized)
+        if (settings && settings.autoRegenerate)
+            Regenerate();
+    }
+
+    [ContextMenu("Regenerate")]
+    public void Regenerate()
+    {
+        if (!initialized || !settings)
             return;
 
         if (sphereFaces == null)
             sphereFaces = GetComponentsInChildren<SphereFace>();
 
         Stopwatch stopwatch = Stopwatch.StartNew();
-        Regenerate();
-        stopwatch.Stop();
-        Debug.Log("Regenerated " + gameObject.name + " (" + stopwatch.ElapsedMilliseconds + "ms)");
-    }
-
-    [ContextMenu("Regenerate")]
-    public void Regenerate()
-    {
-        if (!initialized)
-            return;
 
         ReconstructData();
         UpdateMesh();
         UpdateShaders();
         info.UpdateInfo(this);
+
+        stopwatch.Stop();
+        Debug.Log("Regenerated " + gameObject.name + " (" + stopwatch.ElapsedMilliseconds + "ms)");
+        RegenerationCompleted.Invoke(this);
+
     }
 
     public void Initialize()
@@ -70,6 +75,9 @@ public class Sphere : MonoBehaviour
 
     public void ReconstructData()
     {
+        if (settings == null)
+            return;
+
         if (settings.fixEdgeNormals)
             foreach (SphereFace sphereFace in sphereFaces)
                 sphereFace.ReconstructData_SeamlessNormals(settings);
@@ -77,11 +85,9 @@ public class Sphere : MonoBehaviour
             foreach (SphereFace sphereFace in sphereFaces)
                 sphereFace.ReconstructData_NoNormalFix(settings);
 
-        SurfaceModifier surfaceModifier;
-
-        foreach (Transform child in transform)
-            if (child.gameObject.activeSelf && (surfaceModifier = child.GetComponent<SurfaceModifier>()))
-                surfaceModifier.Run(this);
+        foreach (NoiseLayer noiseLayer in settings.noiseLayers)
+            if (noiseLayer.enabled)
+                noiseLayer.Run(this);
     }
 
     public void UpdateMesh()
@@ -102,11 +108,12 @@ public class Sphere : MonoBehaviour
         // If this is ocean sphere: Update the terrain shader's ocean level
         if (sphereType == SphereType.Ocean)
         {
-            planet.TerrainSphere.settings.material.SetFloat("_Ocean_Elevation", settings.radius);
+            if (planet.TerrainSphere.settings != null && planet.TerrainSphere.settings.material != null)
+                planet.TerrainSphere.settings.material.SetFloat("_Ocean_Elevation", settings.radius);
         }
-           
+
         // If this is terrain sphere: Update the terrain shader's elevation range
-        else
+        else if (settings != null && settings.material != null)
         {
             settings.material.SetFloat("_Min_Elevation", elevationRange.min);
             settings.material.SetFloat("_Max_Elevation", elevationRange.max);

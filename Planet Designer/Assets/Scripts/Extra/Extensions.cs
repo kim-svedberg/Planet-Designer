@@ -399,7 +399,13 @@ public static class Extensions
     /// </summary>
     public static void Wrap(this ref float x, float min, float max)
     {
-        x = x - (max - min) * Mathf.Floor(x / (max - min));
+        if (x >= min && x <= max)
+            return;
+
+        if (x < min)
+            x = max - (min - x) % (max - min);
+        else
+            x = min + (x - min) % (max - min);
     }
 
     /// <summary>
