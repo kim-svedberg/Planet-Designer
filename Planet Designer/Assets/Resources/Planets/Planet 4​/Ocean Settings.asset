@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b9a301fc43bb45bda3703b0d594caa3, type: 3}
-  m_Name: New Sphere Settings
+  m_Name: Ocean Settings
   m_EditorClassIdentifier: 
-  autoRegenerate: 0
-  fixEdgeNormals: 0
-  resolution: 0
-  vertexDistributionBias: 0
-  radius: 0
-  material: {fileID: 0}
+  autoRegenerate: 1
+  fixEdgeNormals: 1
+  resolution: 100
+  vertexDistributionBias: -0.06
+  radius: 150
+  material: {fileID: 2100000, guid: 6532c1d7e9ea44b7e8954cd73f575cd3, type: 2}
+  noiseLayers: []

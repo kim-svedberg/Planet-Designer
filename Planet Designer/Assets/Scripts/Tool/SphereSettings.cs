@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Planet Designer/Sphere Settings")]
 public class SphereSettings : ScriptableObject
 {
+    private Sphere sphere;
+
     public bool autoRegenerate = true;
     public bool fixEdgeNormals = true;
 
@@ -20,5 +22,16 @@ public class SphereSettings : ScriptableObject
     public Material material;
 
     public List<NoiseLayer> noiseLayers = new List<NoiseLayer>();
+
+    public void SetSphere(Sphere sphere)
+    {
+        this.sphere = sphere;
+    }
+
+    private void OnValidate()
+    {
+        if (sphere && autoRegenerate)
+            sphere.Regenerate();
+    }
 
 }

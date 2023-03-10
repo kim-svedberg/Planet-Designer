@@ -17,6 +17,7 @@ public class Planet : MonoBehaviour
     [SerializeField, HideInInspector] private bool initialized;
 
     public static UnityEvent<Planet> RegenerationCompleted = new UnityEvent<Planet>();
+    public static UnityEvent<Planet> Loaded = new UnityEvent<Planet>();
 
     public string PlanetName { get { return planetName; } set { planetName = value; } }
     public Sphere TerrainSphere => terrainSphere;

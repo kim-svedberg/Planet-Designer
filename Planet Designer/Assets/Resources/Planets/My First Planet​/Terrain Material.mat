@@ -184,9 +184,9 @@ Material:
     - _Grass_Max_Elevation: 0
     - _Grass_Range: 97
     - _Grass_Scale: 0.3
-    - _Max_Elevation: 158.46457
+    - _Max_Elevation: 158.4613
     - _Metallic: 0
-    - _Min_Elevation: 145.22183
+    - _Min_Elevation: 145.224
     - _Noise_Scale: 1
     - _OcclusionStrength: 1
     - _Ocean_Elevation: 150

@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoRegenerate: 1
   fixEdgeNormals: 1
-  resolution: 95
+  resolution: 65
   vertexDistributionBias: -0.06
   radius: 150
-  material: {fileID: 2100000, guid: 0023e3cfddeb848fe9d9acddd37a08e4, type: 2}
+  material: {fileID: 2100000, guid: bc954601c353042b3ba4630eb644444d, type: 2}
   noiseLayers:
   - enabled: 1
     amplitude: 2.07
@@ -33,7 +33,16 @@ MonoBehaviour:
         tangentMode: 0
         weightedMode: 3
         inWeight: 0
-        outWeight: 0.8263473
+        outWeight: 0.7449245
+      - serializedVersion: 3
+        time: 0.5060453
+        value: 0.4265803
+        inSlope: 0.0141525455
+        outSlope: 0.0141525455
+        tangentMode: 0
+        weightedMode: 3
+        inWeight: 0.55925
+        outWeight: 0.5142802
       - serializedVersion: 3
         time: 1
         value: 1
@@ -41,16 +50,16 @@ MonoBehaviour:
         outSlope: 0
         tangentMode: 0
         weightedMode: 3
-        inWeight: 0.6926148
+        inWeight: 0.77534443
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     seed:
-      value: 9
+      value: 1
   - enabled: 1
-    amplitude: 1.92
-    scale: 2.22
+    amplitude: 2.24
+    scale: 1.49
     manipulation:
       serializedVersion: 2
       m_Curve:
@@ -85,10 +94,10 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     seed:
-      value: 13
+      value: 2
   - enabled: 1
-    amplitude: 0.71
-    scale: 9.46
+    amplitude: 0.76
+    scale: 8
     manipulation:
       serializedVersion: 2
       m_Curve:
@@ -123,4 +132,4 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     seed:
-      value: 163
+      value: 3

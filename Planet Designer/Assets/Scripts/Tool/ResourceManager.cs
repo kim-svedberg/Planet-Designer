@@ -60,11 +60,16 @@ public class ResourceManager : MonoBehaviour
         // Link settings and material resources
         planet.OceanSphere.Settings = Resources.Load<SphereSettings>(planetFolder + "Ocean Settings");
         planet.TerrainSphere.Settings = Resources.Load<SphereSettings>(planetFolder + "Terrain Settings");
+
         planet.OceanSphere.Settings.material = Resources.Load<Material>(planetFolder + "Ocean Material");
         planet.TerrainSphere.Settings.material = Resources.Load<Material>(planetFolder + "Terrain Material");
 
+        planet.OceanSphere.Settings.SetSphere(planet.OceanSphere);
+        planet.TerrainSphere.Settings.SetSphere(planet.TerrainSphere);
+
         // Generate planet
         planet.Regenerate();
+        Planet.Loaded.Invoke(planet);
 
 #if UNITY_EDITOR
         Selection.activeObject = planet.TerrainSphere.gameObject;
