@@ -3,61 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[ExecuteAlways]
-public class Zone : MonoBehaviour
+public enum ZoneType { Radial, Global }
+
+public class Zone : Selectable
 {
-    [SerializeField] private GeographicCoordinates coordinates;
+    [SerializeField] private ZoneType zoneType;
+    [SerializeField] private GeographicTransform geographicTransform;
     [SerializeField] private float radius;
-    [SerializeField] private Color gizmosColor;
-    [SerializeField] private bool selected;
 
-#if UNITY_EDITOR
-    private void OnEnable()
+    private void OnValidate()
     {
-        SceneView.onSceneGUIDelegate += this.OnSceneMouseOver;
-    }
-#endif
-
-    [ExecuteAlways]
-    private void Update()
-    {
-        if (!selected)
-            return;
-
-        selected = false;
-
-#if UNITY_EDITOR
-        Vector3 mousePositionInWorld = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition).origin;
-        //GameObject go = HandleUtility.world
-        //Hand
-
-        if (Input.GetMouseButtonDown(0))
-        {
-
-        }
-#endif
-
+        transform.localScale = Vector3.one * radius;
     }
 
-#if UNITY_EDITOR
-    private void OnSceneMouseOver(SceneView view)
+    public override void WhileSelected()
     {
-        Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-        RaycastHit hit;
-        //And add switch Event.current.type for checking Mouse click and switch tiles
-        if (Physics.Raycast(ray, out hit, 100f))
+        if (Input.GetMouseButton(0) && !Input.GetKey(KeyCode.Space))
         {
-            Debug.DrawRay(ray.origin, hit.transform.position, Color.blue, 5f);
-            Debug.Log(hit.transform.name);
-            Debug.Log(hit.transform.position);
+            geographicTransform.Coordinates = SelectionManager.Instance.MouseSurfaceGeographicCoordinates;
+            geographicTransform.UpdateTransform();
         }
     }
-#endif
 
-    private void OnDrawGizmosSelected()
+    public override void OnSelected()
     {
-        selected = true;
-        Gizmos.color = gizmosColor;
-        Gizmos.DrawSphere(transform.position, radius);
+        Debug.Log(gameObject.name + " Selected");
     }
+
+    public override void OnDeselected()
+    {
+        Debug.Log(gameObject.name + " Deselected");
+    }
+
+    public bool IsWithin()
+    {
+        return false;
+    }
+
 }

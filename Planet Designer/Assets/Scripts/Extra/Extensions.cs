@@ -238,7 +238,9 @@ public static class Extensions
     public static void Enable(this Button button)
     {
         button.interactable = true;
-        button.animator.SetTrigger("Normal");
+
+        if (button.animator)
+            button.animator.SetTrigger("Normal");
     }
 
     /// <summary>
@@ -247,7 +249,9 @@ public static class Extensions
     public static void Disable(this Button button)
     {
         button.interactable = false;
-        button.animator.SetTrigger("Disabled");
+
+        if (button.animator)
+            button.animator.SetTrigger("Disabled");
     }
 
     /// <summary>

@@ -71,19 +71,32 @@ public class ResourceManager : MonoBehaviour
         planet.Regenerate();
         Planet.Loaded.Invoke(planet);
 
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         Selection.activeObject = planet.TerrainSphere.gameObject;
         EditorGUIUtility.PingObject(planet.TerrainSphere.gameObject);
-#endif
+        #endif
     }
 
     public void DeletePlanet(string planetName)
     {
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         AssetDatabase.DeleteAsset("Assets/Resources/Planets/" + planetName);
-#endif
+        #endif
     }
 
-    
+    public void RenamePlanet(string planetName, string newPlanetName)
+    {
+        #if UNITY_EDITOR
+        AssetDatabase.RenameAsset("Assets/Resources/Planets/" + planetName, newPlanetName);
+        #endif
+    }
+
+    public string DuplicatePlanet(string planetName)
+    {
+        #if UNITY_EDITOR
+        AssetDatabase.CopyAsset("Assets/Resources/Planets/" + planetName, "Assets/Resources/Planets/" + planetName + " (copy)");
+        #endif
+        return planetName + " (copy)";
+    }
 
 }

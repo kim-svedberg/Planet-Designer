@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoRegenerate: 1
   fixEdgeNormals: 1
-  resolution: 150
+  resolution: 93
   vertexDistributionBias: -0.06
   radius: 108
   material: {fileID: 2100000, guid: 0add71826c8ec455fa57597b992c3b80, type: 2}

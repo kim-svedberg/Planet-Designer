@@ -8,18 +8,41 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField] private ResourceManager resourceManager;
     [SerializeField] private TextMeshProUGUI newPlanetName;
+    [SerializeField] private TextMeshProUGUI renamePlanetName;
     [SerializeField] private GridLayoutGroup cardGrid;
+    [SerializeField] private ToggleGroup planetCardToggleGroup;
     [SerializeField] private GameObject planetCardPrefab;
     [SerializeField] private GameObject newPlanetPrompt;
     [SerializeField] private GameObject editorMenu;
-    [SerializeField] private GameObject backButton;
+
+    [Header("Buttons")]
+    [SerializeField] private Button backButton;
+    [SerializeField] private Button newButton;
+    [SerializeField] private Button openButton;
+    [SerializeField] private Button renameButton;
+    [SerializeField] private Button duplicateButton;
+    [SerializeField] private Button deleteButton;
 
     private PlanetCard selectedPlanetCard;
 
     private void OnEnable()
     {
         RefreshGrid();
-        backButton.SetActive(GameObject.Find("Planet"));
+        backButton.gameObject.SetActive(GameObject.Find("Planet"));
+    }
+
+    private void Update()
+    {
+        if (planetCardToggleGroup.AnyTogglesOn())
+        {
+            if (!openButton.interactable)
+                EnablePlanetCardButtons(true);
+        }
+        else
+        {
+            if (openButton.interactable)
+                EnablePlanetCardButtons(false);
+        }
     }
 
     public void RefreshGrid()
@@ -49,6 +72,16 @@ public class MainMenu : MonoBehaviour
         selectedPlanetCard = null;
     }
 
+    public void EnablePlanetCardButtons(bool enabled)
+    {
+        openButton.SetEnabled(enabled);
+        renameButton.SetEnabled(enabled);
+        duplicateButton.SetEnabled(enabled);
+        deleteButton.SetEnabled(enabled);
+    }
+
+    // Button actions
+
     public void CreatePlanet()
     {
         if (newPlanetName.text == "")
@@ -61,21 +94,29 @@ public class MainMenu : MonoBehaviour
         editorMenu.SetActive(true);
     }
 
-    public void DeleteSelectedPlanet()
-    {
-        if (selectedPlanetCard == null)
-            throw new System.Exception("No planet selected");
-
-        resourceManager.DeletePlanet(selectedPlanetCard.name);
-        RefreshGrid();
-    }
-
     public void OpenSelectedPlanet()
     {
-        if (selectedPlanetCard == null)
-            throw new System.Exception("No planet selected");
-
         resourceManager.LoadPlanet(selectedPlanetCard.name);
+    }
+
+    public void RenameSelectedPlanet()
+    {
+        string newName = renamePlanetName.text;
+        resourceManager.RenamePlanet(selectedPlanetCard.name, newName);
+        selectedPlanetCard.SetName(newName);
+    }
+
+    public void DuplicateSelectedPlanet()
+    {
+        string newPlanetName = resourceManager.DuplicatePlanet(selectedPlanetCard.name);
+        RefreshGrid();
+        cardGrid.transform.Find(newPlanetName).GetComponent<Toggle>().isOn = true;
+    }
+
+    public void DeleteSelectedPlanet()
+    {
+        resourceManager.DeletePlanet(selectedPlanetCard.name);
+        RefreshGrid();
     }
 
 }

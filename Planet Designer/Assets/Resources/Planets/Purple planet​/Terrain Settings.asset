@@ -16,7 +16,7 @@ MonoBehaviour:
   fixEdgeNormals: 1
   resolution: 30
   vertexDistributionBias: -0.06
-  radius: 122
+  radius: 147.78
   material: {fileID: 2100000, guid: 51a02a6e6e8bd42308505a73d17590d8, type: 2}
   noiseLayers:
   - enabled: 1

@@ -9,7 +9,7 @@ public class GeographicTransform : MonoBehaviour
     [SerializeField] private Vector3 rotation;
     [SerializeField] private bool continuousUpdate;
 
-    public GeographicCoordinates Coordinates => coordinates;
+    public GeographicCoordinates Coordinates { get { return coordinates; } set { coordinates = value; } }
 
     public float longitude { get { return coordinates.longitude; } set { coordinates.longitude = value; } }
     public float latitude  { get { return coordinates.latitude;  } set { coordinates.latitude = value;  } }
