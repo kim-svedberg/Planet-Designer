@@ -10,14 +10,20 @@ using Debug = UnityEngine.Debug;
 public class Planet : MonoBehaviour
 {
     [SerializeField, ReadOnly] private string planetName;
-    [SerializeField, HideInInspector] private Sphere terrainSphere;
-    [SerializeField, HideInInspector] private Sphere oceanSphere;
-    [SerializeField, HideInInspector] private Transform featuresParent;
-    [SerializeField, HideInInspector] private Transform objectsParent;
-    [SerializeField, HideInInspector] private bool initialized;
+    [SerializeField, ReadOnly] private bool initialized;
 
-    public static UnityEvent<Planet> RegenerationCompleted = new UnityEvent<Planet>();
-    public static UnityEvent<Planet> Loaded = new UnityEvent<Planet>();
+    [SerializeField] private Sphere oceanSphere;
+    [SerializeField] private Sphere terrainSphere;
+    [SerializeField] private Transform featuresParent;
+    [SerializeField] private Transform objectsParent;
+
+    [SerializeField] private GameObject forestPrefab;
+
+    private List<Feature> features = new List<Feature>();
+
+    public static Planet Instance { get; private set; }
+    public static UnityEvent RegenerationCompleted = new UnityEvent();
+    public static UnityEvent Loaded = new UnityEvent();
 
     public string PlanetName { get { return planetName; } set { planetName = value; } }
     public Sphere TerrainSphere => terrainSphere;
@@ -35,12 +41,8 @@ public class Planet : MonoBehaviour
 
     public void Initialize()
     {
+        Instance = this;
         initialized = true;
-
-        terrainSphere = transform.Find("Terrain Sphere").GetComponent<Sphere>();
-        oceanSphere = transform.Find("Ocean Sphere").GetComponent<Sphere>();
-        featuresParent = transform.Find("Features");
-        objectsParent = transform.Find("Objects");
 
         terrainSphere.Initialize();
         oceanSphere.Initialize();
@@ -56,10 +58,33 @@ public class Planet : MonoBehaviour
 
         terrainSphere.Regenerate();
         oceanSphere.Regenerate();
+        RegenerateFeatures();
 
         stopwatch.Stop();
         Debug.Log("Regenerated " + gameObject.name + " (" + stopwatch.ElapsedMilliseconds + "ms)");
-        RegenerationCompleted.Invoke(this);
+        RegenerationCompleted.Invoke();
+    }
+
+    public void RegenerateFeatures()
+    {
+        foreach (Feature feature in features)
+            feature.Regenerate();
+    }
+
+    public Forest AddForest(string forestName, ForestSettings forestSettings, ZoneSettings zoneSettings)
+    {
+        Forest forest = Instantiate(forestPrefab, featuresParent).GetComponent<Forest>();
+        forest.gameObject.name = forestName;
+        forest.Initialize(forestSettings, zoneSettings);
+        features.Add(forest);
+        return forest;
+    }
+
+    public void DeleteFeature(Feature feature)
+    {
+        features.Remove(feature);
+        Destroy(feature.gameObject);
+        GameObject.Find("Managers").GetComponent<ResourceManager>().DeleteFeature(planetName, feature.name);
     }
 
 }

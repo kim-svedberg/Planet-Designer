@@ -25,5 +25,7 @@ public abstract class Selectable : MonoBehaviour
     public abstract void OnDeselected();
 
     public abstract void WhileSelected();
-    
+
+    public abstract void Delete();
+
 }

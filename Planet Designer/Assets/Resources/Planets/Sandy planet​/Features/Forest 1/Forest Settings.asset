@@ -9,12 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b9a301fc43bb45bda3703b0d594caa3, type: 3}
-  m_Name: Ocean Sphere Settings
+  m_Script: {fileID: 11500000, guid: 6c80c5976d7d94a5186032d5254fe9ab, type: 3}
+  m_Name: Forest Settings
   m_EditorClassIdentifier: 
-  autoRegenerate: 1
-  fixEdgeNormals: 1
-  resolution: 150
-  vertexDistributionBias: -0.07
-  radius: 150.81
-  material: {fileID: 2100000, guid: 3fabc42c2cae54ffe8ddda405db8ea84, type: 2}
+  seed:
+    value: 0
+  density: 50
+  seedScale: 10
+  prefabs:
+  - prefab: {fileID: 0}
+    selected: 1

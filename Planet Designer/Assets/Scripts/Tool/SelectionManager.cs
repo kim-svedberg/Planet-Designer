@@ -4,54 +4,30 @@ using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
-    [SerializeField] private GameObject reticlePrefab;
     [SerializeField] private Selectable selectable;
-    [SerializeField] private LayerMask raycastLayerMask;
     private bool selectionUpdatedThisFrame;
     private Reticle reticle;
 
     public static SelectionManager Instance { get; private set; }
-    public Vector3 MouseSurfacePosition { get; private set; }
-    public GeographicCoordinates MouseSurfaceGeographicCoordinates { get; private set; }
     public Selectable Selectable => selectable;
 
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-
-        reticle = Instantiate(reticlePrefab).GetComponent<Reticle>();
-        reticle.name = "Reticle";
-        reticle.gameObject.SetActive(false);
+        Instance = this;
     }
 
     private void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit raycastHit;
+        if (selectable && Reticle.Instance.OnPlanetSurface == false && Input.GetKeyDown(0))
+            Select(null);
 
-        if (Physics.Raycast(ray, out raycastHit, 3000f, raycastLayerMask))
+        if (selectable && Input.GetKeyDown(KeyCode.Escape))
+            Select(null);
+
+        if (selectable && Input.GetKeyDown(KeyCode.Backspace))
         {
-            MouseSurfacePosition = raycastHit.point;
-            MouseSurfaceGeographicCoordinates = GeographicCoordinates.FromPosition(MouseSurfacePosition);
-
-            if (!reticle.gameObject.activeSelf)
-            {
-                reticle.gameObject.SetActive(true);
-                Cursor.visible = false;
-            }
-
-            reticle.GeographicTransform.Coordinates = MouseSurfaceGeographicCoordinates;
-            reticle.GeographicTransform.UpdateTransform();
-        }
-
-        else
-        {
-            if (reticle.gameObject.activeSelf)
-            {
-                reticle.gameObject.SetActive(false);
-                Cursor.visible = true;
-            }  
+            Select(null);
+            selectable.Delete();
         }
 
         if (selectionUpdatedThisFrame)
@@ -63,11 +39,13 @@ public class SelectionManager : MonoBehaviour
 
     public void Select(Selectable selectable)
     {
+        // Only select one selectable each frame
         if (selectionUpdatedThisFrame)
             return;
 
         selectionUpdatedThisFrame = true;
 
+        // Deselect current selectable
         if (this.selectable)
         {
             this.selectable.Selected = false;
@@ -80,8 +58,12 @@ public class SelectionManager : MonoBehaviour
             }
         }
 
-        this.selectable = selectable;
-        selectable.Selected = true;
-        selectable.OnSelected();
+        // Select new selectable
+        if (selectable)
+        {
+            this.selectable = selectable;
+            selectable.Selected = true;
+            selectable.OnSelected();
+        }
     }
 }

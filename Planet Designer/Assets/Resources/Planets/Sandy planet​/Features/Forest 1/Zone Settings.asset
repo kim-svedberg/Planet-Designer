@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b9a301fc43bb45bda3703b0d594caa3, type: 3}
-  m_Name: Terrain Sphere Settings
+  m_Script: {fileID: 11500000, guid: ed165f6c472cf4a56808f90117861c85, type: 3}
+  m_Name: Zone Settings
   m_EditorClassIdentifier: 
-  autoRegenerate: 1
-  fixEdgeNormals: 1
-  resolution: 98
-  vertexDistributionBias: -0.07
-  radius: 150
-  material: {fileID: 2100000, guid: 3fabc42c2cae54ffe8ddda405db8ea84, type: 2}
+  pointAngle: 1
+  points: []

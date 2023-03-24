@@ -40,6 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8702413908900886657}
+  - component: {fileID: 4268125552923360157}
   m_Layer: 0
   m_Name: Planet
   m_TagString: Untagged
@@ -66,6 +67,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4268125552923360157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7666094848642559749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99cacaeb38de34997b7a96c56fd99b8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  planetName: 
+  initialized: 0
+  oceanSphere: {fileID: 3486471611673908704}
+  terrainSphere: {fileID: 3943440961072375353}
+  featuresParent: {fileID: 8514464449325054099}
+  objectsParent: {fileID: 8757041740854345958}
+  forestPrefab: {fileID: 301675352415291352, guid: 1486e0c4c1d314ba684cc7ec318ec98f,
+    type: 3}
 --- !u!1 &8650446802705212991
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,6 +223,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4113283078242396511}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3943440961072375353 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1129483780263956326, guid: 37395dc429db34299bb3e13405284eee,
+    type: 3}
+  m_PrefabInstance: {fileID: 4113283078242396511}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be2287b48d1e04f28bcef7b0e6c9550d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4597846426435476102
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -311,6 +344,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 37395dc429db34299bb3e13405284eee, type: 3}
+--- !u!114 &3486471611673908704 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1129483780263956326, guid: 37395dc429db34299bb3e13405284eee,
+    type: 3}
+  m_PrefabInstance: {fileID: 4597846426435476102}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be2287b48d1e04f28bcef7b0e6c9550d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3662384886690374638 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 945108655589308776, guid: 37395dc429db34299bb3e13405284eee,

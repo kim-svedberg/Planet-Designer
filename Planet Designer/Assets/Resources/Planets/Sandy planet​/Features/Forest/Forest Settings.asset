@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c80c5976d7d94a5186032d5254fe9ab, type: 3}
+  m_Name: Forest Settings
+  m_EditorClassIdentifier: 
+  seed:
+    value: 0
+  density: 54.8
+  seedScale: 10
+  prefabs:
+  - prefab: {fileID: 137650, guid: 826b6a0b570e8460990010fa615b5a2a, type: 3}
+    selected: 1
+  - prefab: {fileID: 127550, guid: 87a6cef862ce2cb4a88c5ca5d5af5d2b, type: 3}
+    selected: 0
+  - prefab: {fileID: 176278, guid: b4067796890e74501882ee9d255346de, type: 3}
+    selected: 0
+  - prefab: {fileID: 115020, guid: 7d33b6f00f49f440cad7c57d10c968b8, type: 3}
+    selected: 1

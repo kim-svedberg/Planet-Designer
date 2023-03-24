@@ -58,4 +58,20 @@ public struct Range
     {
         min = max = value;
     }
+
+    /// <summary>
+    /// Clamps the provided value to this range
+    /// </summary>
+    public float Clamp(float value)
+    {
+        return Mathf.Clamp(value, min, max);
+    }
+
+    /// <summary>
+    /// Returns the value in the middle of this range
+    /// </summary>
+    public float Mid()
+    {
+        return min + (max - min) * 0.5f;
+    }
 }

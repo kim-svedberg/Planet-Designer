@@ -1,24 +1,109 @@
 using System.Collections;
 using System.Collections.Generic;
+using KevinCastejon.ConeMesh;
 using UnityEngine;
 
 public class Reticle : MonoBehaviour
 {
     [SerializeField] private GeographicTransform geographicTransform;
-    private Vector3 originalScale;
+    [SerializeField] private LayerMask raycastLayerMask;
+    [SerializeField] private GameObject pin;
+    [SerializeField] private GameObject brush;
+    [SerializeField] private Range brushAngleRange;
+    [SerializeField] private float brushAngleSpeed;
 
+    private Vector3 originalPinScale;
+    private float brushAngle;
+    private Material brushMaterial;
+
+    public static Reticle Instance { get; private set; }
     public GeographicTransform GeographicTransform => geographicTransform;
+    public bool OnPlanetSurface => pin.activeSelf;
+    public float BrushAngle => brushAngle;
 
     private void Awake()
     {
-        originalScale = transform.localScale;
+        Instance = this;
+        originalPinScale = pin.transform.localScale;
+        brushAngle = brushAngleRange.Mid();
+        brushMaterial = brush.GetComponent<MeshRenderer>().material;
+        SetBrushColor(Color.white);
     }
 
     private void Update()
     {
-        float distance = Vector3.Distance(transform.position, Camera.main.transform.position);
+        // Hide if controlling camera
 
-        transform.localScale = originalScale * distance;
+        /*if (CameraController.BeingControlled())
+        {
+            SetVisibility(false);
+            return;
+        }*/
+
+        // Update visibility
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit raycastHit;
+
+        if (Physics.Raycast(ray, out raycastHit, 3000f, raycastLayerMask))
+        {
+            SetVisibility(true);
+        }
+        else
+        {
+            SetVisibility(false);
+            return;
+        }
+
+        // Update position
+
+        geographicTransform.Coordinates = GeographicCoordinates.FromPosition(raycastHit.point);
+        geographicTransform.UpdateTransform();
+
+        // Update pin scale
+
+        float distance = Vector3.Distance(transform.position, Camera.main.transform.position);
+        pin.transform.localScale = originalPinScale * distance;
+
+        // Update brush angle
+
+        if (!CameraController.BeingControlled() && Input.mouseScrollDelta != Vector2.zero)
+        {
+            brushAngle -= Input.mouseScrollDelta.y * brushAngle * brushAngleSpeed;
+            brushAngle = brushAngleRange.Clamp(brushAngle);
+        }
+
+        // Update brush scale
+
+        float planetRadius = Planet.Instance.TerrainSphere.Settings.radius;
+        float brushRadius = (new Vector2(0, planetRadius) - new Vector2(0, planetRadius).RotateAroundZero(brushAngle * Mathf.Deg2Rad)).x;
+        brush.transform.localScale = new Vector3(brushRadius * 2f, planetRadius, brushRadius * 2f);
+
+        // Update brush color
+
+        if (!SelectionManager.Instance.Selectable)
+            SetBrushColor(new Color(1f, 1f, 1f, 2f));
+
+        else if (Input.GetKey(KeyCode.LeftShift))
+            SetBrushColor(new Color(1f, 0f, 0f, 2f));
+
+        else
+            SetBrushColor(new Color(0f, 0.9f, 0f, 2f));
+    }
+
+    private void SetVisibility(bool visible)
+    {
+        if (pin.activeSelf == !visible)
+        {
+            pin.SetActive(visible);
+            brush.SetActive(visible);
+            Cursor.visible = !visible;
+        }
+    }
+
+    private void SetBrushColor(Color color)
+    {
+        brushMaterial.SetColor("_Emission", color);
     }
 
 }

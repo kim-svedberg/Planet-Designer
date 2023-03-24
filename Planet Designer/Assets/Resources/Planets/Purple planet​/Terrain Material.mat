@@ -213,10 +213,10 @@ Material:
     - _Sand_Scale: 0.6
     - _Smoothness: 0.3
     - _SmoothnessTextureChannel: 0
-    - _Snow_Elevation: 5.44
+    - _Snow_Elevation: 2.83
     - _Snow_Noise_Blending: 0.12
     - _Snow_Noise_Scale: 0.4
-    - _Snow_Noise_Strength: 3.85
+    - _Snow_Noise_Strength: -2.37
     - _Snow_Scale: 0.41
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -234,7 +234,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Grass_Color: {r: 1, g: 0.3915094, b: 0.9480151, a: 1}
     - _Rock_Color: {r: 0.7471965, g: 0.7942168, b: 0.8207547, a: 1}
-    - _Sand_Color: {r: 0, g: 1, b: 0.060247898, a: 1}
+    - _Sand_Color: {r: 0.3254717, g: 0.69727516, b: 1, a: 1}
     - _Snow_Color: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

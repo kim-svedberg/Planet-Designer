@@ -16,10 +16,10 @@ MonoBehaviour:
   fixEdgeNormals: 1
   resolution: 65
   vertexDistributionBias: -0.06
-  radius: 150
+  radius: 150.74
   material: {fileID: 2100000, guid: bc954601c353042b3ba4630eb644444d, type: 2}
   noiseLayers:
-  - enabled: 1
+  - enabled: 0
     amplitude: 2.07
     scale: 1.91
     manipulation:
@@ -57,7 +57,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     seed:
       value: 1
-  - enabled: 1
+  - enabled: 0
     amplitude: 2.24
     scale: 1.49
     manipulation:
@@ -95,7 +95,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     seed:
       value: 2
-  - enabled: 1
+  - enabled: 0
     amplitude: 0.76
     scale: 8
     manipulation:
