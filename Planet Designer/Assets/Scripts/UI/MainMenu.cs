@@ -96,6 +96,7 @@ public class MainMenu : MonoBehaviour
 
     public void OpenSelectedPlanet()
     {
+        Destroy(GameObject.Find("Planet"));
         resourceManager.LoadPlanet(selectedPlanetCard.name);
     }
 

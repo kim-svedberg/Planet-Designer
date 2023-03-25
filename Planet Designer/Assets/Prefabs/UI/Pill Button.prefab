@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 7139056702615295673}
   - component: {fileID: 7139056702615295670}
   - component: {fileID: 8228138233248431233}
+  - component: {fileID: 5474318822456187153}
   m_Layer: 5
   m_Name: Pill Button
   m_TagString: Untagged
@@ -198,7 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.21569, g: 0.26667, b: 0.32157, a: 1}
+  m_Color: {r: 0.26611, g: 0.36098, b: 0.49057, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -279,3 +280,33 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &5474318822456187153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7139056702615295668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52c162dc854d2f24fa639ba0623de5ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  size: 16
+  spread: 0
+  useGlobalAngle: 1
+  offsetAngle: 90
+  offsetDistance: 10
+  offset: {x: -6.4278774, y: -7.6604433}
+  color: {r: 0.09545213, g: 0.190836, b: 0.31132078, a: 1}
+  inset: 1
+  blendMode: 0
+  useCasterAlpha: 1
+  ignoreCasterColor: 1
+  colorBleedMode: 2
+  disableFitCompensation: 0
+  shadowAsSibling: 0
+  cutout: 0
+  baked: 0
+  modifiedFromInspector: 0
+  bakedShadows: []
