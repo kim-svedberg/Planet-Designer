@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed:
     value: 0
-  density: 54.8
+  density: 40.7
   seedScale: 10
   prefabs:
   - prefab: {fileID: 137650, guid: 826b6a0b570e8460990010fa615b5a2a, type: 3}

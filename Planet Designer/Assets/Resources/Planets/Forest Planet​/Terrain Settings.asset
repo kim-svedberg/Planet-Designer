@@ -20,8 +20,8 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 0add71826c8ec455fa57597b992c3b80, type: 2}
   noiseLayers:
   - enabled: 1
-    amplitude: 2.37
-    scale: 1.91
+    amplitude: 3
+    scale: 1.2
     manipulation:
       serializedVersion: 2
       m_Curve:
@@ -59,7 +59,7 @@ MonoBehaviour:
       value: 4
   - enabled: 1
     amplitude: 1.95
-    scale: 0.95
+    scale: 1
     manipulation:
       serializedVersion: 2
       m_Curve:
@@ -96,8 +96,8 @@ MonoBehaviour:
     seed:
       value: 5
   - enabled: 1
-    amplitude: 0.51
-    scale: 11.06
+    amplitude: 0.7
+    scale: 10
     manipulation:
       serializedVersion: 2
       m_Curve:
