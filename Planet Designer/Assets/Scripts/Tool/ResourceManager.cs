@@ -9,10 +9,16 @@ public class ResourceManager : MonoBehaviour
     public static ResourceManager Instance { get; private set; }
 
     [SerializeField] private GameObject planetPrefab;
+    private char slash;
 
     private void Awake()
     {
         Instance = this;
+
+        if (Application.platform == RuntimePlatform.OSXEditor)
+            slash = '/';
+        else
+            slash = '\\';
     }
 
     /// <summary>
@@ -20,10 +26,12 @@ public class ResourceManager : MonoBehaviour
     /// </summary>
     public void CreatePlanet(string presetName, string planetName)
     {
-        #if UNITY_EDITOR
-        AssetDatabase.CopyAsset("Assets/Resources/Presets/" + presetName, "Assets/Resources/Planets/" + planetName);
+#if UNITY_EDITOR
+        AssetDatabase.CopyAsset(
+        "Assets" + slash + "Resources" + slash + "Presets" + slash + presetName,
+        "Assets" + slash + "Resources" + slash + "Planets" + slash + planetName);
         LoadPlanet(planetName, true);
-        #endif
+#endif
     }
 
     /// <summary>
@@ -31,11 +39,11 @@ public class ResourceManager : MonoBehaviour
     /// </summary>
     public string[] GetSubdirectoryNames(string folder)
     {
-        string[] names = Directory.GetDirectories(Application.dataPath + "/Resources/" + folder);
+        string[] names = Directory.GetDirectories(Application.dataPath + slash + "Resources" + slash + folder);
 
         for (int i = 0; i < names.Length; ++i)
         {
-            names[i] = names[i].Substring(names[i].LastIndexOf('/') + 1);
+            names[i] = names[i].Substring(names[i].LastIndexOf(slash) + 1);
         }
 
         return names;
@@ -46,7 +54,7 @@ public class ResourceManager : MonoBehaviour
     /// </summary>
     public Sprite GetPlanetSprite(string folder, string planetName)
     {
-        Texture2D texture = Resources.Load<Texture2D>(folder + "/" + planetName + "/Sprite");
+        Texture2D texture = Resources.Load<Texture2D>(folder + slash + planetName + slash + "Sprite");
 
         if (texture == null)
             return null;
@@ -59,11 +67,11 @@ public class ResourceManager : MonoBehaviour
     /// </summary>
     public void UpdatePlanetSprite(string planetName, Texture2D texture)
     {
-        #if UNITY_EDITOR
-        string spritePath = "Assets/Resources/Planets/" + planetName + "/Sprite.asset";
+#if UNITY_EDITOR
+        string spritePath = "Assets" + slash + "Resources" + slash + "Planets" + slash + planetName + slash + "Sprite.asset";
         AssetDatabase.DeleteAsset(spritePath);
         AssetDatabase.CreateAsset(texture, spritePath);
-        #endif
+#endif
     }
 
     /// <summary>
@@ -71,7 +79,7 @@ public class ResourceManager : MonoBehaviour
     /// </summary>
     public void LoadPlanet(string planetName, bool newPlanet)
     {
-        string planetFolder = "Planets/" + planetName + "/";
+        string planetFolder = "Planets" + slash + planetName + slash;
 
         // Instantiate and initialize planet
         Planet planet = Instantiate(planetPrefab).GetComponent<Planet>();
@@ -90,21 +98,23 @@ public class ResourceManager : MonoBehaviour
         planet.TerrainSphere.Settings.SetSphere(planet.TerrainSphere);
 
         // Load features
-        #if UNITY_EDITOR
-        string[] features = AssetDatabase.GetSubFolders("Assets/Resources/Planets/" + planetName + "/Features");
-
+#if UNITY_EDITOR
+        string[] features = AssetDatabase.GetSubFolders("Assets" + slash + "Resources" + slash + "Planets" + slash + planetName + slash + "Features");
+        Debug.Log(features.Length);
         foreach (string feature in features)
         {
             string featureName = feature.Substring(feature.LastIndexOf('/') + 1);
+            Debug.Log("Loading " + featureName);
 
-            if (featureName.Contains("Forest"))
+            // All features are forests (needs a better check)
+            //if (featureName.Contains("Forest"))
             {
                 ForestSettings forestSettings = Resources.Load<ForestSettings>(feature.Replace("Assets/Resources/", "") + "/Forest Settings");
                 ZoneSettings zoneSettings = Resources.Load<ZoneSettings>(feature.Replace("Assets/Resources/", "") + "/Zone Settings");
                 planet.AddForest(featureName, forestSettings, zoneSettings);
             }
         }
-        #endif
+#endif
 
         // Randomize seeds
         if (newPlanet)
@@ -125,9 +135,9 @@ public class ResourceManager : MonoBehaviour
     /// </summary>
     public void DeletePlanet(string planetName)
     {
-        #if UNITY_EDITOR
-        AssetDatabase.DeleteAsset("Assets/Resources/Planets/" + planetName);
-        #endif
+#if UNITY_EDITOR
+        AssetDatabase.DeleteAsset("Assets" + slash + "Resources" + slash + "Planets" + slash + planetName);
+#endif
     }
 
     /// <summary>
@@ -135,9 +145,9 @@ public class ResourceManager : MonoBehaviour
     /// </summary>
     public void RenamePlanet(string planetName, string newPlanetName)
     {
-        #if UNITY_EDITOR
-        AssetDatabase.RenameAsset("Assets/Resources/Planets/" + planetName, newPlanetName);
-        #endif
+#if UNITY_EDITOR
+        AssetDatabase.RenameAsset("Assets" + slash + "Resources" + slash + "Planets" + slash + planetName, newPlanetName);
+#endif
     }
 
     /// <summary>
@@ -147,9 +157,9 @@ public class ResourceManager : MonoBehaviour
     {
         // CopyAsset does not work if duplicate already exists !!!
 
-        #if UNITY_EDITOR
-        AssetDatabase.CopyAsset("Assets/Resources/Planets/" + planetName, "Assets/Resources/Planets/" + planetName + " (copy)");
-        #endif
+#if UNITY_EDITOR
+        AssetDatabase.CopyAsset("Assets" + slash + "Resources" + slash + "Planets" + slash + planetName, "Assets" + slash + "Resources" + slash + "Planets" + slash + planetName + " (copy)");
+#endif
         return planetName + " (copy)";
     }
 
@@ -161,17 +171,17 @@ public class ResourceManager : MonoBehaviour
         zoneSettings = ScriptableObject.CreateInstance<ZoneSettings>();
         forestSettings = ScriptableObject.CreateInstance<ForestSettings>();
 
-        #if UNITY_EDITOR
-        string folderGUID = AssetDatabase.CreateFolder("Assets/Resources/Planets/" + planetName + "/Features", "Forest");
+#if UNITY_EDITOR
+        string folderGUID = AssetDatabase.CreateFolder("Assets" + slash + "Resources" + slash + "Planets" + slash + planetName + slash + "Features", "Forest");
         string folderPath = AssetDatabase.GUIDToAssetPath(folderGUID);
 
-        AssetDatabase.CreateAsset(zoneSettings, folderPath + "/Zone Settings.asset");
-        AssetDatabase.CreateAsset(forestSettings, folderPath + "/Forest Settings.asset");
+        AssetDatabase.CreateAsset(zoneSettings, folderPath + slash + "Zone Settings.asset");
+        AssetDatabase.CreateAsset(forestSettings, folderPath + slash + "Forest Settings.asset");
 
         forestSettings.seed.New();
 
         return folderPath.Substring(folderPath.LastIndexOf('/') + 1);
-        #endif
+#endif
         return null;
     }
 
@@ -180,9 +190,9 @@ public class ResourceManager : MonoBehaviour
     /// </summary>
     public void RenameFeature(string planetName, string featureName, string newFeatureName)
     {
-        #if UNITY_EDITOR
-        AssetDatabase.RenameAsset("Assets/Resources/Planets/" + planetName + "/Features/" + featureName, newFeatureName);
-        #endif
+#if UNITY_EDITOR
+        AssetDatabase.RenameAsset("Assets" + slash + "Resources" + slash + "Planets" + slash + planetName + slash + "Features" + slash + featureName, newFeatureName);
+#endif
     }
 
     /// <summary>
@@ -190,9 +200,9 @@ public class ResourceManager : MonoBehaviour
     /// </summary>
     public void DeleteFeature(string planetName, string featureName)
     {
-        #if UNITY_EDITOR
-        AssetDatabase.DeleteAsset("Assets/Resources/Planets/" + planetName + "/Features/" + featureName);
-        #endif
+#if UNITY_EDITOR
+        AssetDatabase.DeleteAsset("Assets" + slash + "Resources" + slash + "Planets" + slash + planetName + slash + "Features" + slash + featureName);
+#endif
     }
 
 }
