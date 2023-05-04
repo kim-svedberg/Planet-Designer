@@ -2,10 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using TMPro;
 
 public class EditorMenu : MonoBehaviour
 {
+    public static EditorMenu Instance { get; private set; }
+
     [SerializeField] private ResourceManager resourceManager;
+    [SerializeField] private TextMeshProUGUI helpText;
+    [SerializeField] private TextMeshProUGUI cameraControlText;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    public void SetHelpText(string text)
+    {
+        helpText.text = text;
+    }
+
+    public void ShowCameraControlText(bool visible)
+    {
+        cameraControlText.gameObject.SetActive(visible);
+    }
+
+    // Button actions
 
     public void SelectTerrainSphere()
     {
@@ -41,9 +63,13 @@ public class EditorMenu : MonoBehaviour
         Forest forest = Planet.Instance.AddForest(forestName, forestSettings, zoneSettings);
         forest.GetComponent<Zone>().Select();
 
-        #if UNITY_EDITOR
-        Selection.activeObject = forestSettings;
-        #endif
+        FeatureOverview.Instance.Refresh();
+    }
+
+    public void RandomizePlanet()
+    {
+        Planet.Instance.RandomizeSeeds();
+        Planet.Instance.Regenerate();
     }
 
 }

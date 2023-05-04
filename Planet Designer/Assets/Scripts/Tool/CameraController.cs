@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private Light light;
+    public static CameraController Instance { get; private set; }
+
+    [SerializeField] private Light sceneLight;
+    [SerializeField] private Light cameraLight;
+    [SerializeField] private Camera camera;
+    [SerializeField] private LineRenderer lineRenderer;
 
     [Range(1.1f, 16f)]
     [SerializeField] private float distance;
@@ -12,25 +17,28 @@ public class CameraController : MonoBehaviour
     [Range(0.01f, 2f)]
     [SerializeField] private float scrollSpeed;
 
-    private Vector3 previousPosition;
+    [SerializeField] private AnimationCurve lightIntensityOverDistance;
+    [SerializeField] private AnimationCurve fieldOfViewOverDistance;
 
-    public static bool BeingControlled()
-    {
-        return Input.GetKey(KeyCode.Space);
-    }
+    [SerializeField] private bool requireMouseButtonDown;
+
+    private Vector3 previousPosition;
+    private bool beingControlled;
+
+    public bool BeingControlled => beingControlled;
 
     private void Awake()
     {
+        Instance = this;
         Planet.Loaded.AddListener(UpdateMagnitude);
         Sphere.RegenerationCompleted.AddListener((sphere) => { UpdateMagnitude(); });
-
-        UpdateLight();
+        UpdateLightAndFOV();
     }
 
     private void OnValidate()
     {
         UpdateMagnitude();
-        UpdateLight();
+        UpdateLightAndFOV();
     }
 
     private void UpdateMagnitude()
@@ -41,9 +49,11 @@ public class CameraController : MonoBehaviour
         transform.position = transform.position.normalized * Planet.Instance.TerrainSphere.Settings.radius * distance;
     }
 
-    private void UpdateLight()
+    private void UpdateLightAndFOV()
     {
-        light.intensity = Mathf.Clamp(distance.Remapped(2.5f, 5f, 0.9f, 0f), 0f, 0.9f);
+        cameraLight.intensity = lightIntensityOverDistance.Evaluate(distance);
+        cameraLight.intensity *= Vector3.Dot(sceneLight.transform.forward, cameraLight.transform.forward).Remapped(-1f, 1f, 1f, 0f).Smoothstep();
+        camera.fieldOfView = fieldOfViewOverDistance.Evaluate(distance);
     }
 
     private void Update()
@@ -51,7 +61,37 @@ public class CameraController : MonoBehaviour
         if (!Planet.Instance)
             return;
 
-        if (!BeingControlled())
+        UpdateLightAndFOV();
+
+        if (!beingControlled && !CanvasManager.Instance.OverridingPlanetControl)
+        {
+            if (Input.GetKey(KeyCode.Space))
+            {
+                beingControlled = true;
+                lineRenderer.enabled = true;
+                EditorMenu.Instance.ShowCameraControlText(true);
+
+                if (!requireMouseButtonDown)
+                {
+                    previousPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+                }
+            }
+        }
+
+        else
+        {
+            if (!Input.GetKey(KeyCode.Space) || CanvasManager.Instance.OverridingPlanetControl)
+            {
+                if (!requireMouseButtonDown || (!Input.GetMouseButton(0) && !Input.GetMouseButtonUp(0)) || CanvasManager.Instance.OverridingPlanetControl)
+                {
+                    beingControlled = false;
+                    lineRenderer.enabled = false;
+                    EditorMenu.Instance.ShowCameraControlText(false);
+                }
+            } 
+        }
+
+        if (!beingControlled)
             return;
 
         // If scrolling
@@ -61,17 +101,16 @@ public class CameraController : MonoBehaviour
             distance = Mathf.Clamp(distance, 1.1f, 16f);
 
             UpdateMagnitude();
-            UpdateLight();
         }
 
         // If left mouse button pressed
-        if (Input.GetMouseButtonDown(0))
+        if (requireMouseButtonDown && Input.GetMouseButtonDown(0))
         {
             previousPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
         }
 
         // If left mouse button held down
-        if (Input.GetMouseButton(0))
+        if (!requireMouseButtonDown || Input.GetMouseButton(0))
         {
             Vector3 viewportPoint = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             Vector3 direction = previousPosition - viewportPoint;
@@ -81,6 +120,7 @@ public class CameraController : MonoBehaviour
             transform.Rotate(new Vector3(1f, 0f, 0f), direction.y * 180f);
             transform.Rotate(new Vector3(0f, 1f, 0f), direction.x * -180f, Space.World);
             transform.Translate(new Vector3(0f, 0f, Planet.Instance.TerrainSphere.Settings.radius * -distance));
+            
         }
     }
 

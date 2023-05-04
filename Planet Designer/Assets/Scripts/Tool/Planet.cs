@@ -30,6 +30,7 @@ public class Planet : MonoBehaviour
     public Sphere OceanSphere => oceanSphere;
     public Transform FeaturesParent => featuresParent;
     public Transform ObjectsParent => objectsParent;
+    public List<Feature> Features => features;
 
     private void OnValidate()
     {
@@ -85,6 +86,26 @@ public class Planet : MonoBehaviour
         features.Remove(feature);
         Destroy(feature.gameObject);
         GameObject.Find("Managers").GetComponent<ResourceManager>().DeleteFeature(planetName, feature.name);
+    }
+
+    public void RandomizeSeeds()
+    {
+        // Randomize seeds for all noise layers
+
+        foreach (NoiseLayer noiseLayer in terrainSphere.Settings.noiseLayers)
+            noiseLayer.seed.New();
+
+        foreach (NoiseLayer noiseLayer in oceanSphere.Settings.noiseLayers)
+            noiseLayer.seed.New();
+
+        // Look for all seeds in features and randomize them
+
+        Forest forest;
+        foreach (Transform feature in featuresParent)
+        {
+            if (forest = feature.GetComponent<Forest>())
+                forest.Settings.seed.New();
+        }
     }
 
 }

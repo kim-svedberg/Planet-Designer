@@ -32,13 +32,14 @@ public class Reticle : MonoBehaviour
 
     private void Update()
     {
-        // Hide if controlling camera
+        // Disable if controlling camera or overridden by canvas
 
-        /*if (CameraController.BeingControlled())
+        if (CameraController.Instance.BeingControlled || CanvasManager.Instance.OverridingPlanetControl)
         {
-            SetVisibility(false);
+            SetPinVisibility(false);
+            SetBrushVisibility(false);
             return;
-        }*/
+        }
 
         // Update visibility
 
@@ -47,11 +48,13 @@ public class Reticle : MonoBehaviour
 
         if (Physics.Raycast(ray, out raycastHit, 3000f, raycastLayerMask))
         {
-            SetVisibility(true);
+            SetPinVisibility(true);
+            SetBrushVisibility(SelectionManager.Instance.Selectable);
         }
         else
         {
-            SetVisibility(false);
+            SetPinVisibility(false);
+            SetBrushVisibility(false);
             return;
         }
 
@@ -65,39 +68,50 @@ public class Reticle : MonoBehaviour
         float distance = Vector3.Distance(transform.position, Camera.main.transform.position);
         pin.transform.localScale = originalPinScale * distance;
 
-        // Update brush angle
-
-        if (!CameraController.BeingControlled() && Input.mouseScrollDelta != Vector2.zero)
+        // If brush is visible
+        if (SelectionManager.Instance.Selectable)
         {
-            brushAngle -= Input.mouseScrollDelta.y * brushAngle * brushAngleSpeed;
-            brushAngle = brushAngleRange.Clamp(brushAngle);
+            // Update brush angle
+
+            if (!CameraController.Instance.BeingControlled && Input.mouseScrollDelta != Vector2.zero)
+            {
+                brushAngle -= Input.mouseScrollDelta.y * brushAngle * brushAngleSpeed;
+                brushAngle = brushAngleRange.Clamp(brushAngle);
+            }
+
+            // Update brush scale
+
+            float planetRadius = Planet.Instance.TerrainSphere.Settings.radius;
+            float brushRadius = (new Vector2(0, planetRadius) - new Vector2(0, planetRadius).RotateAroundZero(brushAngle * Mathf.Deg2Rad)).x;
+            brush.transform.localScale = new Vector3(brushRadius * 2f, planetRadius, brushRadius * 2f);
+
+            // Update brush color
+
+            if (!SelectionManager.Instance.Selectable)
+                SetBrushColor(new Color(1f, 1f, 1f, 2f));
+
+            else if (Input.GetKey(KeyCode.LeftShift))
+                SetBrushColor(new Color(1f, 0f, 0f, 2f));
+
+            else
+                SetBrushColor(new Color(0f, 0.9f, 0f, 2f));
         }
-
-        // Update brush scale
-
-        float planetRadius = Planet.Instance.TerrainSphere.Settings.radius;
-        float brushRadius = (new Vector2(0, planetRadius) - new Vector2(0, planetRadius).RotateAroundZero(brushAngle * Mathf.Deg2Rad)).x;
-        brush.transform.localScale = new Vector3(brushRadius * 2f, planetRadius, brushRadius * 2f);
-
-        // Update brush color
-
-        if (!SelectionManager.Instance.Selectable)
-            SetBrushColor(new Color(1f, 1f, 1f, 2f));
-
-        else if (Input.GetKey(KeyCode.LeftShift))
-            SetBrushColor(new Color(1f, 0f, 0f, 2f));
-
-        else
-            SetBrushColor(new Color(0f, 0.9f, 0f, 2f));
     }
 
-    private void SetVisibility(bool visible)
+    private void SetPinVisibility(bool visible)
     {
         if (pin.activeSelf == !visible)
         {
             pin.SetActive(visible);
-            brush.SetActive(visible);
             Cursor.visible = !visible;
+        }
+    }
+
+    private void SetBrushVisibility(bool visible)
+    {
+        if (brush.activeSelf == !visible)
+        {
+            brush.SetActive(visible);
         }
     }
 

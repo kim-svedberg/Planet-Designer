@@ -49,15 +49,12 @@ public class SpriteCamera : MonoBehaviour
     [ContextMenu("Capture")]
     public void Capture()
     {
-        GameObject planetObj = GameObject.Find("Planet");
-
-        if (planetObj == null)
+        if (!Planet.Instance)
             return;
 
         Stopwatch stopwatch = Stopwatch.StartNew();
 
-        Planet planet = planetObj.GetComponent<Planet>();
-        geographicTransform.magnitude = planet.TerrainSphere.Settings.radius * distance;
+        geographicTransform.magnitude = Planet.Instance.TerrainSphere.Settings.radius * distance;
         geographicTransform.UpdateTransform();
         transform.LookAt(Vector3.zero);
 
@@ -81,9 +78,9 @@ public class SpriteCamera : MonoBehaviour
         RenderTexture.active = currentRenderTexture;
         Destroy(renderTexture);
 
-        resourceManager.UpdatePlanetSprite(planet.PlanetName, texture);
+        resourceManager.UpdatePlanetSprite(Planet.Instance.PlanetName, texture);
 
         stopwatch.Stop();
-        Debug.Log("New thumbnail captured (" + stopwatch.ElapsedMilliseconds + "ms)");
+        Debug.Log("New thumbnail captured for " + Planet.Instance.PlanetName + " (" + stopwatch.ElapsedMilliseconds + "ms)");
     }
 }

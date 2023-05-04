@@ -6,60 +6,121 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private ResourceManager resourceManager;
-    [SerializeField] private TextMeshProUGUI newPlanetName;
-    [SerializeField] private TextMeshProUGUI renamePlanetName;
-    [SerializeField] private GridLayoutGroup cardGrid;
-    [SerializeField] private ToggleGroup planetCardToggleGroup;
-    [SerializeField] private GameObject planetCardPrefab;
-    [SerializeField] private GameObject newPlanetPrompt;
-    [SerializeField] private GameObject editorMenu;
+    [Header("My Planets References")]
+    [SerializeField] private GameObject myPlanetsSelection;
+    [SerializeField] private GameObject myPlanetsButtons;
+    [SerializeField] private GridLayoutGroup myPlanetsGrid;
+    [SerializeField] private ToggleGroup myPlanetsToggleGroup;
 
-    [Header("Buttons")]
+    [Header("Presets References")]
+    [SerializeField] private GameObject presetsSelection;
+    [SerializeField] private GameObject presetsButtons;
+    [SerializeField] private GridLayoutGroup presetsGrid;
+    [SerializeField] private ToggleGroup presetsToggleGroup;
+
+    [Header("Button References")]
     [SerializeField] private Button backButton;
     [SerializeField] private Button newButton;
     [SerializeField] private Button openButton;
     [SerializeField] private Button renameButton;
     [SerializeField] private Button duplicateButton;
     [SerializeField] private Button deleteButton;
+    [SerializeField] private Button createButton;
+    [SerializeField] private Button cancelButton;
 
-    private PlanetCard selectedPlanetCard;
+    [Header("Other References")]
+    [SerializeField] private TextMeshProUGUI newPlanetName;
+    [SerializeField] private TextMeshProUGUI renamePlanetName;
+    [SerializeField] private CanvasManager canvasManager;
+    [SerializeField] private GameObject newPlanetPrompt;
+    [SerializeField] private GameObject editorMenu;
+    [SerializeField] private GameObject planetCardPrefab;
+
+    [Header("Values")]
+    [SerializeField] private PlanetCard selectedPlanetCard;
+
 
     private void OnEnable()
     {
-        RefreshGrid();
-        backButton.gameObject.SetActive(GameObject.Find("Planet"));
+        RefreshMyPlanets();
+        myPlanetsSelection.SetActive(true);
+        myPlanetsButtons.SetActive(true);
+        presetsSelection.SetActive(false);
+        presetsButtons.SetActive(false);
+        backButton.gameObject.SetActive(Planet.Instance);
+        canvasManager.AddPlanetControlOverrider(this);
+    }
+
+    private void OnDisable()
+    {
+        canvasManager.RemovePlanetControlOverrider(this);
     }
 
     private void Update()
     {
-        if (planetCardToggleGroup.AnyTogglesOn())
+        // Enable/disable My Planet buttons
+        if (myPlanetsGrid.gameObject.activeInHierarchy)
         {
-            if (!openButton.interactable)
-                EnablePlanetCardButtons(true);
+            if (myPlanetsToggleGroup.AnyTogglesOn())
+            {
+                if (!openButton.interactable)
+                    EnableMyPlanetsButtons(true);
+            }
+            else
+            {
+                if (openButton.interactable)
+                    EnableMyPlanetsButtons(false);
+            }
         }
+
+        // Enable/disable Preset buttons
         else
         {
-            if (openButton.interactable)
-                EnablePlanetCardButtons(false);
+            if (presetsToggleGroup.AnyTogglesOn())
+            {
+                if (!createButton.interactable)
+                    EnablePresetButtons(true);
+            }
+            else
+            {
+                if (createButton.interactable)
+                    EnablePresetButtons(false);
+            }
         }
     }
 
-    public void RefreshGrid()
+    public void RefreshMyPlanets()
     {
         selectedPlanetCard = null;
 
-        foreach (Transform planetCard in cardGrid.transform)
+        foreach (Transform planetCard in myPlanetsGrid.transform)
             Destroy(planetCard.gameObject);
 
-        foreach (string planetName in resourceManager.GetPlanetNames())
+        foreach (string planetName in ResourceManager.Instance.GetSubdirectoryNames("Planets"))
         {
-            PlanetCard planetCard = Instantiate(planetCardPrefab, cardGrid.transform).GetComponent<PlanetCard>();
+            PlanetCard planetCard = Instantiate(planetCardPrefab, myPlanetsGrid.transform).GetComponent<PlanetCard>();
             planetCard.SetName(planetName);
-            planetCard.SetSprite(resourceManager.GetPlanetSprite(planetName));
+            planetCard.SetSprite(ResourceManager.Instance.GetPlanetSprite("Planets", planetName));
         }
 
-        Debug.Log("Grid refreshed");
+        Debug.Log("My Planets refreshed");
+    }
+
+    public void RefreshPresets()
+    {
+        selectedPlanetCard = null;
+
+        foreach (Transform planetCard in presetsGrid.transform)
+            Destroy(planetCard.gameObject);
+
+        foreach (string planetName in ResourceManager.Instance.GetSubdirectoryNames("Presets"))
+        {
+            PlanetCard planetCard = Instantiate(planetCardPrefab, presetsGrid.transform).GetComponent<PlanetCard>();
+            planetCard.SetName(planetName);
+            planetCard.SetSprite(ResourceManager.Instance.GetPlanetSprite("Presets", planetName));
+        }
+
+        Debug.Log("Presets refreshed");
     }
 
     public void SelectPlanetCard(PlanetCard planetCard)
@@ -72,12 +133,17 @@ public class MainMenu : MonoBehaviour
         selectedPlanetCard = null;
     }
 
-    public void EnablePlanetCardButtons(bool enabled)
+    public void EnableMyPlanetsButtons(bool enabled)
     {
         openButton.SetEnabled(enabled);
         renameButton.SetEnabled(enabled);
         duplicateButton.SetEnabled(enabled);
         deleteButton.SetEnabled(enabled);
+    }
+
+    public void EnablePresetButtons(bool enabled)
+    {
+        createButton.SetEnabled(enabled);
     }
 
     // Button actions
@@ -88,7 +154,12 @@ public class MainMenu : MonoBehaviour
             throw new System.Exception("No planet name entered");
 
         Destroy(GameObject.Find("Planet"));
-        resourceManager.CreatePlanet(newPlanetName.text);
+        string presetName = presetsToggleGroup.GetFirstActiveToggle().GetComponent<PlanetCard>().name;
+        ResourceManager.Instance.CreatePlanet(presetName, newPlanetName.text);
+
+        myPlanetsSelection.SetActive(true);
+        presetsSelection.SetActive(false);
+
         newPlanetPrompt.SetActive(false);
         gameObject.SetActive(false);
         editorMenu.SetActive(true);
@@ -97,27 +168,33 @@ public class MainMenu : MonoBehaviour
     public void OpenSelectedPlanet()
     {
         Destroy(GameObject.Find("Planet"));
-        resourceManager.LoadPlanet(selectedPlanetCard.name);
+        ResourceManager.Instance.LoadPlanet(selectedPlanetCard.name, false);
     }
 
     public void RenameSelectedPlanet()
     {
         string newName = renamePlanetName.text;
-        resourceManager.RenamePlanet(selectedPlanetCard.name, newName);
+        ResourceManager.Instance.RenamePlanet(selectedPlanetCard.name, newName);
         selectedPlanetCard.SetName(newName);
     }
 
     public void DuplicateSelectedPlanet()
     {
-        string newPlanetName = resourceManager.DuplicatePlanet(selectedPlanetCard.name);
-        RefreshGrid();
-        cardGrid.transform.Find(newPlanetName).GetComponent<Toggle>().isOn = true;
+        string newPlanetName = ResourceManager.Instance.DuplicatePlanet(selectedPlanetCard.name);
+        RefreshMyPlanets();
+        myPlanetsGrid.transform.Find(newPlanetName).GetComponent<Toggle>().isOn = true;
     }
 
     public void DeleteSelectedPlanet()
     {
-        resourceManager.DeletePlanet(selectedPlanetCard.name);
-        RefreshGrid();
+        if (Planet.Instance && Planet.Instance.PlanetName == selectedPlanetCard.name)
+        {
+            Destroy(Planet.Instance.gameObject);
+            backButton.gameObject.SetActive(false);
+        }
+
+        ResourceManager.Instance.DeletePlanet(selectedPlanetCard.name);
+        RefreshMyPlanets();
     }
 
 }

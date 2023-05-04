@@ -9,6 +9,7 @@ public class Seed
 
     public int New()
     {
-        return value = Random.Range(int.MinValue, int.MaxValue);
+        return value = Random.Range(-10000, 10000);
     }
+
 }

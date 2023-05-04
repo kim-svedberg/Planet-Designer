@@ -6,40 +6,47 @@ using System.IO;
 
 public class ResourceManager : MonoBehaviour
 {
+    public static ResourceManager Instance { get; private set; }
+
     [SerializeField] private GameObject planetPrefab;
 
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     /// <summary>
-    /// Creats a new planet folder by duplicating the default preset
+    /// Creats a new planet folder by duplicating the a preset
     /// </summary>
-    public void CreatePlanet(string planetName)
+    public void CreatePlanet(string presetName, string planetName)
     {
         #if UNITY_EDITOR
-        AssetDatabase.CopyAsset("Assets/Resources/Presets/Default", "Assets/Resources/Planets/" + planetName);
-        LoadPlanet(planetName);
+        AssetDatabase.CopyAsset("Assets/Resources/Presets/" + presetName, "Assets/Resources/Planets/" + planetName);
+        LoadPlanet(planetName, true);
         #endif
     }
 
     /// <summary>
-    /// Returns the names of all saved planets
+    /// Returns the names of all subdirectories in the provided folder
     /// </summary>
-    public string[] GetPlanetNames()
+    public string[] GetSubdirectoryNames(string folder)
     {
-        string[] planetNames = Directory.GetDirectories(Application.dataPath + "/Resources/Planets");
+        string[] names = Directory.GetDirectories(Application.dataPath + "/Resources/" + folder);
 
-        for (int i = 0; i < planetNames.Length; ++i)
+        for (int i = 0; i < names.Length; ++i)
         {
-            planetNames[i] = planetNames[i].Substring(planetNames[i].LastIndexOf('/') + 1);
+            names[i] = names[i].Substring(names[i].LastIndexOf('/') + 1);
         }
 
-        return planetNames;
+        return names;
     }
 
     /// <summary>
     /// Returns a sprite created using a stored Texture2D
     /// </summary>
-    public Sprite GetPlanetSprite(string planetName)
+    public Sprite GetPlanetSprite(string folder, string planetName)
     {
-        Texture2D texture = Resources.Load<Texture2D>("Planets/" + planetName + "/Sprite");
+        Texture2D texture = Resources.Load<Texture2D>(folder + "/" + planetName + "/Sprite");
 
         if (texture == null)
             return null;
@@ -62,7 +69,7 @@ public class ResourceManager : MonoBehaviour
     /// <summary>
     /// Instantiates a planet prefab, initializes it, and generates the planet
     /// </summary>
-    public void LoadPlanet(string planetName)
+    public void LoadPlanet(string planetName, bool newPlanet)
     {
         string planetFolder = "Planets/" + planetName + "/";
 
@@ -99,13 +106,17 @@ public class ResourceManager : MonoBehaviour
         }
         #endif
 
+        // Randomize seeds
+        if (newPlanet)
+            planet.RandomizeSeeds();
+
         // Generate planet
         planet.Regenerate();
         Planet.Loaded.Invoke();
 
         #if UNITY_EDITOR
-        Selection.activeObject = planet.TerrainSphere.gameObject;
-        EditorGUIUtility.PingObject(planet.TerrainSphere.gameObject);
+        Selection.activeObject = planet.TerrainSphere.Settings;
+        //EditorGUIUtility.PingObject(planet.TerrainSphere.gameObject);
         #endif
     }
 
@@ -157,9 +168,21 @@ public class ResourceManager : MonoBehaviour
         AssetDatabase.CreateAsset(zoneSettings, folderPath + "/Zone Settings.asset");
         AssetDatabase.CreateAsset(forestSettings, folderPath + "/Forest Settings.asset");
 
+        forestSettings.seed.New();
+
         return folderPath.Substring(folderPath.LastIndexOf('/') + 1);
         #endif
         return null;
+    }
+
+    /// <summary>
+    /// Renames a feature folder
+    /// </summary>
+    public void RenameFeature(string planetName, string featureName, string newFeatureName)
+    {
+        #if UNITY_EDITOR
+        AssetDatabase.RenameAsset("Assets/Resources/Planets/" + planetName + "/Features/" + featureName, newFeatureName);
+        #endif
     }
 
     /// <summary>

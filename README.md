@@ -5,12 +5,10 @@ This Unity tool generates game worlds in the form of planets. The tool is curren
 
 ## Screenshots
 
-![PlanetExample1](Images/Planet_example_3.jpg)
+![PlanetExample](Images/Forest_planet.jpg)
 
-![PlanetExample2](Images/Planet_example_4.jpg)
+![MainMenu](Images/Main_menu_4.jpg)
 
-![MainMenu](Images/Main_menu_3.jpg)
+![EditorView](Images/Editor_view.jpg)
 
-![PlanetExample3](Images/Forest_planet.jpg)
-
-
+![HelpMenu](Images/Help_menu.jpg)

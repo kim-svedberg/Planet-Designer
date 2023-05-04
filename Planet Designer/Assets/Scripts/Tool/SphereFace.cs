@@ -22,6 +22,9 @@ public class SphereFace : MonoBehaviour
 
     [SerializeField, HideInInspector] private bool initialized;
 
+    [SerializeField] private bool drawVertices;
+    [SerializeField] private bool drawNormals;
+
     public MeshFilter MeshFilter => meshFilter;
     public Vector3[] Vertices => vertices;
     public int[] Triangles => triangles;
@@ -37,7 +40,7 @@ public class SphereFace : MonoBehaviour
         axisB = Vector3.Cross(localUp, axisA);
 
         transform.parent = parent;
-        gameObject.hideFlags = HideFlags.HideInHierarchy;
+        //gameObject.hideFlags = HideFlags.HideInHierarchy;
         gameObject.layer = transform.parent.gameObject.layer;
 
         meshFilter = gameObject.AddComponent<MeshFilter>();
@@ -289,4 +292,29 @@ public class SphereFace : MonoBehaviour
         mesh.triangles = triangles = newTriangles;
         mesh.normals = normals = newNormals;
     }
+
+    private void OnDrawGizmos()
+    {
+        if (drawVertices || drawNormals)
+        {
+            Vector3 vertex;
+            for (int i = 0; i < vertices.Length; ++i)
+            {
+                vertex = vertices[i];
+
+                if (drawVertices)
+                {
+                    Gizmos.color = Color.white;
+                    Gizmos.DrawSphere(vertex, 1f);
+                }
+
+                if (drawNormals)
+                {
+                    Gizmos.color = Color.cyan;
+                    Gizmos.DrawLine(vertex, vertex + normals[i] * 5f);
+                }
+            }
+        }
+    }
+
 }

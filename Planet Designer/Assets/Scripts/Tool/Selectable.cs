@@ -28,4 +28,6 @@ public abstract class Selectable : MonoBehaviour
 
     public abstract void Delete();
 
+    public abstract bool CheckClickedOn();
+
 }

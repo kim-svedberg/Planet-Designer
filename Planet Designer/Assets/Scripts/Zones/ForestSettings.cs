@@ -15,6 +15,16 @@ public class ForestSettings : ScriptableObject
     [Range(0f, 30f)]
     public float seedScale = 10f;
 
+    /// <summary>
+    /// Stop trees som being placed under water
+    /// </summary>
+    public bool avoidOcean = true;
+
+    /// <summary>
+    /// Stop trees from being placed on objects of the default layer
+    /// </summary>
+    public bool avoidObjects = true;
+
     public List<SelectablePrefab> prefabs = new List<SelectablePrefab>();
 
     public void SetForest(Forest forest)
@@ -25,6 +35,9 @@ public class ForestSettings : ScriptableObject
     private void OnValidate()
     {
         if (forest)
+        {
+            forest.UpdateLayerMask();
             forest.Regenerate();
+        }
     }
 }
